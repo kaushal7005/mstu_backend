@@ -320,7 +320,7 @@ router.route('/startEntry').post((req, res) => {
                     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
                     .then(() =>  console.log("set entry done in data base"))
                     .catch(err => res.status(400).json('Error:'+ err)); 
-                    axios.get('https://www.mastersolutions.online/Users/Logout')
+                    axios.get('https://mdtpl.masterdigitaltechnology.com//Users/Logout')
                     .then(() => { 
                         res.json({"success":"Your task is completed"})
                         console.log("logout success");
@@ -339,4 +339,4 @@ router.route('/startEntry').post((req, res) => {
     });
 });
 
-module.exports = router;
+module.exports = router; 
