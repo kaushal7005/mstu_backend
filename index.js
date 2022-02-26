@@ -12,7 +12,7 @@ app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.URI
+const uri = `mongodb+srv://kaushal7077:kaushal7077@cluster0.jnp5f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 mongoose.connect(uri, {
   useNewUrlParser: true, 
   // useCreateIndex: true
