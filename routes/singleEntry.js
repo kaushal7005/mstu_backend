@@ -32,6 +32,14 @@ router.route('/').post((req, res) => {
                 form.append('UserName', userId);
                 form.append('Password', pass);
                 form.append("__RequestVerificationToken", tokenValue);
+                let today = new Date().toISOString().slice(0, 10);
+                let isEntryDone=false;
+                console.log("userName date",username,today);
+                Entry.findOne({userId: username, eDate:today}, function(err,entry) {
+                    if(entry != null && entry.isEntryDone === true){
+                        isEntryDone=true;
+                    } 
+                });
                 var headers = {
                     'Cookie':JSON.stringify(response.headers['set-cookie'])
                 }
@@ -72,13 +80,14 @@ router.route('/').post((req, res) => {
                             .catch(error => {
                                 msg="check username or pass"
                                 console.log(error);
-                            });  
-                            res.json({"userID":user.userId,"isFirst":user.isFirst,"nCaptcha":user.nCaptcha,"msg":msg,"loop":"1"});
+                            });
+                            
+                            res.json({"userID":user.userId,"isFirst":user.isFirst,"nCaptcha":user.nCaptcha,"msg":msg,"isEntryDone":isEntryDone});
                         })
                         .catch(error => {console.log(error);});
                     }
                     else{
-                        res.json({"userID":user.userId,"isFirst":user.isFirst,"nCaptcha":user.nCaptcha,"msg":"login success","loop":"2"});
+                        res.json({"userID":user.userId,"isFirst":user.isFirst,"nCaptcha":user.nCaptcha,"msg":"login success","isEntryDone":isEntryDone});
                     }
                 })
                 .catch(error => {
@@ -108,11 +117,10 @@ router.route('/').post((req, res) => {
                 .then(async response => {
                     console.log("login success")
                     const afterLoginDom3 = new JSDOM(response.data);
-                    console.log(response.data);
-                    if(afterLoginDom3.window.document.getElementsByTagName("card-title")[0].innerHTML === "Login"){
+                    if(afterLoginDom3.window.document.getElementsByClassName("card-title")[0].innerHTML === "Login"){
                         res.json({"msg":"check username or pass"})
                     }
-                    else{
+                    if(afterLoginDom3.window.document.getElementsByClassName("card-title")[0].innerHTML === "User Details"){
                         planName = afterLoginDom3.window.document.getElementsByClassName("text-primary")[3].innerHTML; 
                         await axios.get('https://mdtpl.masterdigitaltechnology.com/Users/MyProfile',{ headers: {...headers} })
                         .then(async response=>{
@@ -169,13 +177,8 @@ router.route('/').post((req, res) => {
 
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
-    const password = req.body.password;
-   
-    let today = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = today.getFullYear();
-    today = mm + '/' + dd + '/' + yyyy;
+    const password = req.body.password; 
+    let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
         if(entry == null){
             let entryData={
@@ -224,6 +227,7 @@ router.route('/startEntry').post((req, res) => {
                 .then(async response=>{
                     const totalDataDom = new JSDOM(response.data);
                     remainData = totalDataDom.window.document.getElementsByTagName("h3")[1].innerHTML;
+                    attemptedData = totalDataDom.window.document.getElementsByTagName("h3")[2].innerHTML
                     totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
                     wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
                     if(remainData != 0){
@@ -322,19 +326,22 @@ router.route('/startEntry').post((req, res) => {
                     .catch(err => res.status(400).json('Error:'+ err)); 
                     axios.get('https://mdtpl.masterdigitaltechnology.com//Users/Logout')
                     .then(() => { 
-                        res.json({"success":"Your task is completed"})
+                        res.json({"success":"Your task is completed","isEntryDone":true})
                         console.log("logout success");
                     })  
                     .catch(error => {
+                        res.json({"error":"some thing wrong"})
                         console.log(error);
                     });  
                 });            
             })
             .catch(error => {
+                res.json({"error":"some thing wrong"})
                 console.log(error);
             });     
     })
     .catch(error => {
+        res.json({"error":"some thing wrong"})
         console.log(error);
     });
 });
