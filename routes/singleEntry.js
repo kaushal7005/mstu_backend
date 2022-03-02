@@ -178,13 +178,25 @@ router.route('/').post((req, res) => {
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
     const password = req.body.password; 
+    const couponCode = req.body.couponCode; 
+    let speed = 1000;
+    if(couponCode === "kkhome"){
+        speed=150;
+    }
+    if(couponCode === "freefun"){
+        speed=300;
+    }
+    if(couponCode === "sm"){
+        speed=200;
+    }
     let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
         if(entry == null){
             let entryData={
                 userId: username,
                 isPaymentDone: "free",
-                eDate:today
+                eDate:today,
+                couponCode:couponCode
             };
             const EntryData = new Entry(entryData)
             EntryData.save()
@@ -257,7 +269,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }
-                        await new Promise(resolve => setTimeout(resolve,1000))
+                        await new Promise(resolve => setTimeout(resolve,speed))
                     }
                 }
                 if (captchaLength == 8){
@@ -277,7 +289,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }
-                        await new Promise(resolve => setTimeout(resolve,1000))
+                        await new Promise(resolve => setTimeout(resolve,speed))
                     }
                 }
                 if (captchaLength == 6){
@@ -297,7 +309,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }   
-                        await new Promise(resolve => setTimeout(resolve,1000))
+                        await new Promise(resolve => setTimeout(resolve,speed))
                     }
                 }
                 if (captchaLength == 4){
@@ -317,7 +329,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }  
-                        await new Promise(resolve => setTimeout(resolve,1000))
+                        await new Promise(resolve => setTimeout(resolve,speed))
                     }
                 }
                 return Promise.all(promises).then(() => {

@@ -18,6 +18,11 @@ const dailyEntrySchema = new Schema({
     eDate: {
         type: String,
         required: true
+    },
+    couponCode: {
+        type: String,
+        required: true,
+        default: '',
     }
 
 },{timestamps: true});
