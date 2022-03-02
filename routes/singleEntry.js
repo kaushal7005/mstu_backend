@@ -257,7 +257,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }
-                        await new Promise(resolve => setTimeout(resolve,150))
+                        await new Promise(resolve => setTimeout(resolve,1000))
                     }
                 }
                 if (captchaLength == 8){
@@ -277,7 +277,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }
-                        await new Promise(resolve => setTimeout(resolve,150))
+                        await new Promise(resolve => setTimeout(resolve,1000))
                     }
                 }
                 if (captchaLength == 6){
@@ -297,7 +297,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }   
-                        await new Promise(resolve => setTimeout(resolve,150))
+                        await new Promise(resolve => setTimeout(resolve,1000))
                     }
                 }
                 if (captchaLength == 4){
@@ -317,7 +317,7 @@ router.route('/startEntry').post((req, res) => {
                         // if (i%100 == 0){
                         //     res.json({"entryComplete":i})  
                         // }  
-                        await new Promise(resolve => setTimeout(resolve,150))
+                        await new Promise(resolve => setTimeout(resolve,1000))
                     }
                 }
                 return Promise.all(promises).then(() => {
