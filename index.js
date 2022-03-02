@@ -12,8 +12,8 @@ app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://kaushal7077:kaushal7077@cluster0.jnp5f.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-mongoose.connect(uri, {
+const url = process.env.MONGO_URL;
+mongoose.connect(url, {
   useNewUrlParser: true, 
   // useCreateIndex: true
 });

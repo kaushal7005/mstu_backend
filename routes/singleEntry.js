@@ -36,7 +36,7 @@ router.route('/').post((req, res) => {
                 let isEntryDone=false;
                 console.log("userName date",username,today);
                 Entry.findOne({userId: username, eDate:today}, function(err,entry) {
-                    if(entry != null && entry.isEntryDone === true){
+                    if(entry != null && entry.isEntryDone === "true"){
                         isEntryDone=true;
                     } 
                 });
@@ -324,24 +324,22 @@ router.route('/startEntry').post((req, res) => {
                     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
                     .then(() =>  console.log("set entry done in data base"))
                     .catch(err => res.status(400).json('Error:'+ err)); 
-                    axios.get('https://mdtpl.masterdigitaltechnology.com//Users/Logout')
+                    axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Logout')
                     .then(() => { 
                         res.json({"success":"Your task is completed","isEntryDone":true})
                         console.log("logout success");
                     })  
                     .catch(error => {
-                        res.json({"error":"some thing wrong"})
+                        res.json({"error":"some thing wrong"});
                         console.log(error);
                     });  
                 });            
             })
             .catch(error => {
-                res.json({"error":"some thing wrong"})
                 console.log(error);
             });     
     })
     .catch(error => {
-        res.json({"error":"some thing wrong"})
         console.log(error);
     });
 });
