@@ -4,6 +4,8 @@ let Entry = require('../models/dailyEntry')
 const jsdom = require("jsdom");
 const FormData = require('form-data');
 const { JSDOM } = jsdom;
+// const Razorpay = require('razorpay');
+
 const axios = require('axios');
 
 axios.defaults.withCredentials = true
@@ -11,6 +13,11 @@ axios.defaults.withCredentials = true
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
+
+// var instance = new Razorpay({
+//     key_id: 'rzp_test_QDrP0cyZ8YdsBD',
+//     key_secret: 'AUI8eq4kPExpUOFsLIHgRNKy',
+//   });
 
 router.route('/').post((req, res) => {
     const username = req.body.userID;
@@ -178,8 +185,9 @@ router.route('/').post((req, res) => {
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
     const password = req.body.password; 
-    const couponCode = req.body.couponCode; 
-    let speed = 1000;
+    let couponCode = "none"; 
+    couponCode = req.body.couponCode;
+    let speed = 800;
     if(couponCode === "kkhome"){
         speed=150;
     }
@@ -356,4 +364,15 @@ router.route('/startEntry').post((req, res) => {
     });
 });
 
+// router.route('/singlePayment').post(async(req, res) => {
+//     Razorpay.orders.create({
+//         amount: 50000,
+//         currency: "INR",
+//         receipt: "receipt#1",
+//         notes: {
+//           key1: "value3",
+//           key2: "value2"
+//         }
+//       })
+// });
 module.exports = router; 
