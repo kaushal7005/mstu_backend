@@ -42,11 +42,11 @@ router.route('/').post((req, res) => {
                 let today = new Date().toISOString().slice(0, 10);
                 let isEntryDone=false;
                 console.log("userName date",username,today);
-                Entry.findOne({userId: username, eDate:today}, function(err,entry) {
-                    if(entry != null && entry.isEntryDone === "true"){
-                        isEntryDone=true;
-                    } 
-                });
+                // Entry.findOne({userId: username, eDate:today}, function(err,entry) {
+                //     if(entry != null && entry.isEntryDone === "true"){
+                //         isEntryDone=true;
+                //     } 
+                // });
                 var headers = {
                     'Cookie':JSON.stringify(response.headers['set-cookie'])
                 }
