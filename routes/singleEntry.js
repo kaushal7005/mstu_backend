@@ -187,6 +187,7 @@ router.route('/startEntry').post((req, res) => {
     let totalData=0;
     let resTimeOut=0;
     let nCaptcha='0';
+    let rCaptcha=0;
     let speed = 400;
     let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
@@ -236,145 +237,33 @@ router.route('/startEntry').post((req, res) => {
                 totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
                 wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
                 await User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
-                .then(() =>  {console.log("Update total captcha successfully"); nCaptcha = totalData})
+                .then(() =>  {console.log("Update total captcha successfully"); rCaptcha = parseInt(remainData)})
                 .catch(err =>  {console.log(err);});
                 console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Coupon Code is ${couponCode},`);
                 if(couponCode === "kkhome"){
-                    if(nCaptcha === '200'){
-                        resTimeOut=60000;
-                    }
-                    if(nCaptcha === '250'){
-                        resTimeOut=60000;
-                    }
-                    if(nCaptcha === '300'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '350'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '400'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '500'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '600'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '700'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '800'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '1000'){
-                        resTimeOut = 120000;
-                    }
-                    if(nCaptcha === '1600'){
-                        resTimeOut = 180000;
-                    }
+                    for (i = 200; i<= 1600; i += 50){
+                        if(rCaptcha <= i){
+                            resTimeOut=(speed*i)+5000;
+                        }
+                    } 
                 }else if(couponCode === "freefun"){
-                    if(nCaptcha === '200'){
-                        resTimeOut=90000;
-                    }
-                    if(nCaptcha === '250'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '300'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '350'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '400'){
-                        resTimeOut = 120000;
-                    }
-                    if(nCaptcha === '500'){
-                        resTimeOut = 135000;
-                    }
-                    if(nCaptcha === '600'){
-                        resTimeOut = 150000;
-                    }
-                    if(nCaptcha === '700'){
-                        resTimeOut = 180000;
-                    }
-                    if(nCaptcha === '800'){
-                        resTimeOut = 210000;
-                    }
-                    if(nCaptcha === '1000'){
-                        resTimeOut = 255000;
-                    }
-                    if(nCaptcha === '1600'){
-                        resTimeOut = 420000;
-                    }
+                    for (i = 200; i<= 1600; i += 50){
+                        if(rCaptcha <= i){
+                            resTimeOut=(speed*i)+5000;
+                        }
+                    } 
                 }else if(couponCode === "sm"){
-                    if(nCaptcha === '200'){
-                        resTimeOut=60000;
-                    }
-                    if(nCaptcha === '250'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '300'){
-                        resTimeOut = 60000;
-                    }
-                    if(nCaptcha === '350'){
-                        resTimeOut = 75000;
-                    }
-                    if(nCaptcha === '400'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '500'){
-                        resTimeOut = 90000;
-                    }
-                    if(nCaptcha === '600'){
-                        resTimeOut = 105000;
-                    }
-                    if(nCaptcha === '700'){
-                        resTimeOut = 135000;
-                    }
-                    if(nCaptcha === '800'){
-                        resTimeOut = 150000;
-                    }
-                    if(nCaptcha === '1000'){
-                        resTimeOut = 180000;
-                    }
-                    if(nCaptcha === '1600'){
-                        resTimeOut = 300000;
-                    }
+                    for (i = 200; i<= 1600; i += 50){
+                        if(rCaptcha <= i){
+                            resTimeOut=(speed*i)+5000;
+                        }
+                    } 
                 }else{
-                    if(nCaptcha === '200'){
-                        resTimeOut=120000;
-                    }
-                    if(nCaptcha === '250'){
-                        resTimeOut = 120000;
-                    }
-                    if(nCaptcha === '300'){
-                        resTimeOut = 120000;
-                    }
-                    if(nCaptcha === '350'){
-                        resTimeOut = 150000;
-                    }
-                    if(nCaptcha === '400'){
-                        resTimeOut = 180000;
-                    }
-                    if(nCaptcha === '500'){
-                        resTimeOut = 210000;
-                    }
-                    if(nCaptcha === '600'){
-                        resTimeOut = 240000;
-                    }
-                    if(nCaptcha === '700'){
-                        resTimeOut = 300000;
-                    }
-                    if(nCaptcha === '800'){
-                        resTimeOut = 330000;
-                    }
-                    if(nCaptcha === '1000'){
-                        resTimeOut = 420000;
-                    }
-                    if(nCaptcha === '1600'){
-                        resTimeOut = 640000;
-                    }
+                    for (i = 200; i<= 1600; i += 50){
+                        if(rCaptcha <= i){
+                            resTimeOut=(speed*i)+5000;
+                        }
+                    } 
                 }
                 function replaceStr(str, find, replace) {
                     return str.replace(new RegExp(find, 'g'), replace);
