@@ -371,7 +371,10 @@ router.route('/startEntry').post((req, res) => {
                 const resAnd = replaceStr(resHess,"&","%26");
                 const resPass = resAnd
                 console.log("Detail:- ",username,resPass,resTimeOut,speed);
-                if (remainData !== 0){
+                if (remainData === "0"){
+                    res.json({"success":"Your task is completed","isEntryDone":true});
+                }
+                else{
                     console.log("Call AWS Lambda Function");
                     await axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${resPass}&speed=${speed}`)
                     .then(async response => {
@@ -385,9 +388,6 @@ router.route('/startEntry').post((req, res) => {
                     .catch(err => res.status(400).json('Error:'+ err));
                     // res.json({"success":"Your task is completed","isEntryDone":true});
                     setTimeout(()=>{res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
-                }
-                else{
-                    res.json({"success":"Your task is completed","isEntryDone":true});
                 }
             })
             .catch(error => {console.log(error);});
