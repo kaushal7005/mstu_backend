@@ -4,7 +4,7 @@
   "description": "Backend of the dataentry website",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -22,7 +22,8 @@
     "jsdom": "^19.0.0",
     "mongoose": "^6.2.2",
     "morgan": "^1.10.0",
-    "pg": "^8.7.3"
-  },
-  "devDependencies": {}
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3",
+    "razorpay": "^2.8.0"
+  }
 }

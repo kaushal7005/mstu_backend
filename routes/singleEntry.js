@@ -188,7 +188,8 @@ router.route('/').post((req, res) => {
 
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
-    const password = replaceHess(req.body.password,"#","%23");
+    const password = req.body.password;
+    
     let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
         if(entry == null){
@@ -391,8 +392,9 @@ router.route('/startEntry').post((req, res) => {
             resTimeOut = 640000;
         }
     }
+    const Awspassword = replaceHess(req.body.password,"#","%23");
     if (remainData !== 0){
-        axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${password}&speed=${speed}`)
+        axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${Awspassword}&speed=${speed}`)
         .then(async response => {
             console.log("response:- ",response.data); 
         })
