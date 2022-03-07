@@ -14,6 +14,10 @@ function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
+function replaceHess(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
+
 // var instance = new Razorpay({
 //     key_id: 'rzp_test_QDrP0cyZ8YdsBD',
 //     key_secret: 'AUI8eq4kPExpUOFsLIHgRNKy',
@@ -184,7 +188,7 @@ router.route('/').post((req, res) => {
 
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
-    const password = req.body.password; 
+    const password = replaceHess(req.body.password,"#","%23");
     let couponCode = "none"; 
     couponCode = req.body.couponCode;
     let speed = 400;
