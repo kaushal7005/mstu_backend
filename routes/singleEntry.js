@@ -181,7 +181,13 @@ router.route('/').post((req, res) => {
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
     const password = req.body.password;
-    
+    let couponCode = "none"; 
+    couponCode = req.body.couponCode;
+    let remainData=0;
+    let totalData=0;
+    let resTimeOut=0;
+    let nCaptcha='0';
+    let speed = 400;
     let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
         if(entry == null){
@@ -196,16 +202,7 @@ router.route('/startEntry').post((req, res) => {
             .then(() => {console.log("entry data save")})
             .catch(err => res.status(400).json('Error:'+ err));  
         }
-        // else{
-        //     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
-        //     .then(() =>  console.log("set entry done in data base"))
-        //     .catch(err => res.status(400).json('Error:'+ err)); 
-        //     res.json({"success":"Your task is completed"})
-        // }    
     });
-    let couponCode = "none"; 
-    couponCode = req.body.couponCode;
-    let speed = 400;
     if(couponCode === "kkhome"){
         speed=100;
     }
@@ -215,10 +212,6 @@ router.route('/startEntry').post((req, res) => {
     if(couponCode === "sm"){
         speed=175;
     }
-    let remainData=0;
-    let totalData=0;
-    let resTimeOut=0;
-    let nCaptcha='0';
    
     axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
     .then(async response => {
@@ -242,8 +235,7 @@ router.route('/startEntry').post((req, res) => {
                 remainData = totalDataDom.window.document.getElementsByTagName("h3")[1].innerHTML;
                 totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
                 wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
-                  
-               await User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
+                await User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
                 .then(() =>  {console.log("Update total captcha successfully"); nCaptcha = totalData})
                 .catch(err =>  {console.log(err);});
                 console.log(`Total Data is ${totalData}, Coupon Code is ${couponCode}`);
@@ -378,8 +370,9 @@ router.route('/startEntry').post((req, res) => {
                 const resHess = replaceStr(password,"#","%23");
                 const resAnd = replaceStr(resHess,"&","%26");
                 const resPass = resAnd
-                console.log("set time out and user pass",username,resPass,speed);
+                console.log("Detail:- ",username,resPass,resTimeOut,speed);
                 if (remainData !== 0){
+                    console.log("Call AWS Lambda Function");
                     await axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${resPass}&speed=${speed}`)
                     .then(async response => {
                         console.log("response:- Done"); 
@@ -391,9 +384,11 @@ router.route('/startEntry').post((req, res) => {
                     .then(() =>  console.log("set entry done in data base"))
                     .catch(err => res.status(400).json('Error:'+ err));
                     // res.json({"success":"Your task is completed","isEntryDone":true});
-                    setTimeout(()=>{ res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
+                    setTimeout(()=>{res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
                 }
-                res.json({"success":"Your task is completed","isEntryDone":true});
+                else{
+                    res.json({"success":"Your task is completed","isEntryDone":true});
+                }
             })
             .catch(error => {console.log(error);});
         })
