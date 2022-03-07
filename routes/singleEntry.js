@@ -387,12 +387,13 @@ router.route('/startEntry').post((req, res) => {
                     .catch(error => {
                         console.log(error);
                     });
+                    Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
+                    .then(() =>  console.log("set entry done in data base"))
+                    .catch(err => res.status(400).json('Error:'+ err));
+                    // res.json({"success":"Your task is completed","isEntryDone":true});
+                    setTimeout(()=>{ res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
                 }
-                Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
-                .then(() =>  console.log("set entry done in data base"))
-                .catch(err => res.status(400).json('Error:'+ err));
-                // res.json({"success":"Your task is completed","isEntryDone":true});
-                setTimeout(()=>{ res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
+                res.json({"success":"Your task is completed","isEntryDone":true});
             })
             .catch(error => {console.log(error);});
         })
