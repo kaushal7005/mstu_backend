@@ -189,6 +189,27 @@ router.route('/').post((req, res) => {
 router.route('/startEntry').post((req, res) => {
     const username = req.body.userID;
     const password = replaceHess(req.body.password,"#","%23");
+    let today = new Date().toISOString().slice(0, 10);
+    Entry.findOne({userId: username, eDate:today}, function(err,entry) {
+        if(entry == null){
+            let entryData={
+                userId: username,
+                isPaymentDone: "free",
+                eDate:today,
+                couponCode:couponCode
+            };
+            const EntryData = new Entry(entryData)
+            EntryData.save()
+            .then(() => {console.log("entry data save")})
+            .catch(err => res.status(400).json('Error:'+ err));  
+        }
+        // else{
+        //     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
+        //     .then(() =>  console.log("set entry done in data base"))
+        //     .catch(err => res.status(400).json('Error:'+ err)); 
+        //     res.json({"success":"Your task is completed"})
+        // }    
+    });
     let couponCode = "none"; 
     couponCode = req.body.couponCode;
     let speed = 400;
@@ -203,12 +224,15 @@ router.route('/startEntry').post((req, res) => {
     }
     let remainData=0;
     let totalData=0;
+    let resTimeOut = 640000;
+    let nCaptcha = 0;
+   
     axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
     .then(async response => {
+        console.log("call login page");
         let tokenKey = "__RequestVerificationToken";
         const loginDom = new JSDOM(response.data);
         let tokenValue = loginDom.window.document.getElementsByName(tokenKey)[0].value;
-        let wrongData=0;
         let form=new FormData();
         form.append('UserName', username);
         form.append('Password', password);
@@ -216,34 +240,27 @@ router.route('/startEntry').post((req, res) => {
         let headers={
             'Cookie':JSON.stringify(response.headers['set-cookie'])
         }
-        await axios.post('https://mdtpl.masterdigitaltechnology.com/Users/Login', form, 
-        { headers: {...headers,...form.getHeaders()} })
+        await axios.post('https://mdtpl.masterdigitaltechnology.com/Users/Login', form,{ headers: {...headers,...form.getHeaders()} })
         .then(async response => {
-            console.log(`Login success in ${username}`);
-            let promises  = [];
+            console.log(`Login success in ${username}`)
             await axios.get('https://mdtpl.masterdigitaltechnology.com/Users/JobWork',{ headers: {...headers, referer:"https://mdtpl.masterdigitaltechnology.com/Users/TodayWork"} })
             .then(async response=>{
                 const totalDataDom = new JSDOM(response.data);
                 remainData = totalDataDom.window.document.getElementsByTagName("h3")[1].innerHTML;
                 totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
                 wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
-                if(remainData != 0){
-                    captchaLength =  totalDataDom.window.document.getElementsByClassName("noselect")[0].innerHTML.length;
-                }
+                  
                 User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
                 .then(() =>  console.log("Update total captcha successfully"))
-                .catch(err => res.status(400).json('Error:'+ err + "total captcha not updated"));
+                .catch(err =>  {console.log(err);});
                 console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Wrong Data is ${wrongData}`);
             })
             .catch(error => {console.log(error);});
         })
-        .catch(error => {
-            console.log(error);
-        }); 
+        .catch(error => {console.log(error);});
     })
     .catch(error => {console.log(error);});
-    let resTimeOut = 640000;
-    let nCaptcha = 0;
+
     User.findOne({userId: username}, function(err, user) {
         if (user != null){
             nCaptcha = user.nCaptcha;
@@ -374,30 +391,6 @@ router.route('/startEntry').post((req, res) => {
             resTimeOut = 640000;
         }
     }
-    let today = new Date().toISOString().slice(0, 10);
-    Entry.findOne({userId: username, eDate:today}, function(err,entry) {
-        if(entry == null){
-            let entryData={
-                userId: username,
-                isPaymentDone: "free",
-                eDate:today,
-                couponCode:couponCode
-            };
-            const EntryData = new Entry(entryData)
-            EntryData.save()
-            .then(() => {console.log("entry data save")})
-            .catch(err => res.status(400).json('Error:'+ err));  
-        }
-        // else{
-        //     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
-        //     .then(() =>  console.log("set entry done in data base"))
-        //     .catch(err => res.status(400).json('Error:'+ err)); 
-        //     res.json({"success":"Your task is completed"})
-        // }    
-    });
-    // User.findOne({userId: username,isFirst:"true"}, function(err, user) {
-
-    // });
     if (remainData !== 0){
         axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${password}&speed=${speed}`)
         .then(async response => {
