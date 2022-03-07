@@ -242,26 +242,30 @@ router.route('/startEntry').post((req, res) => {
                 console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Coupon Code is ${couponCode},`);
                 if(couponCode === "kkhome"){
                     for (i = 200; i<= 1600; i += 50){
-                        if(rCaptcha <= i){
+                        if(rCaptcha > 1 && rCaptcha <= i){
                             resTimeOut=(speed*i)+5000;
+                            break;
                         }
                     } 
                 }else if(couponCode === "freefun"){
                     for (i = 200; i<= 1600; i += 50){
-                        if(rCaptcha <= i){
+                        if(rCaptcha > 1 && rCaptcha <= i){
                             resTimeOut=(speed*i)+5000;
+                            break;
                         }
                     } 
                 }else if(couponCode === "sm"){
                     for (i = 200; i<= 1600; i += 50){
-                        if(rCaptcha <= i){
+                        if(rCaptcha > 1 && rCaptcha <= i){
                             resTimeOut=(speed*i)+5000;
+                            break;
                         }
                     } 
                 }else{
                     for (i = 200; i<= 1600; i += 50){
-                        if(rCaptcha <= i){
+                        if(rCaptcha > 1 && rCaptcha <= i){
                             resTimeOut=(speed*i)+5000;
+                            break;
                         }
                     } 
                 }
