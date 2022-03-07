@@ -201,6 +201,180 @@ router.route('/startEntry').post((req, res) => {
     if(couponCode === "sm"){
         speed=175;
     }
+  
+    await axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
+    .then(async response => {
+        let tokenKey = "__RequestVerificationToken";
+        const loginDom = new JSDOM(response.data);
+        let tokenValue = loginDom.window.document.getElementsByName(tokenKey)[0].value;
+        let remainData=0;
+        let totalData=0;
+        let wrongData=0;
+        let form=new FormData();
+        form.append('UserName', username);
+        form.append('Password', password);
+        form.append([tokenKey], tokenValue);
+        let headers={
+            'Cookie':JSON.stringify(response.headers['set-cookie'])
+        }
+        await axios.post('https://mdtpl.masterdigitaltechnology.com/Users/Login', form, 
+        { headers: {...headers,...form.getHeaders()} })
+        .then(async response => {
+            console.log(`Login success in ${username}`);
+            let promises  = [];
+            await axios.get('https://mdtpl.masterdigitaltechnology.com/Users/JobWork',{ headers: {...headers, referer:"https://mdtpl.masterdigitaltechnology.com/Users/TodayWork"} })
+            .then(async response=>{
+                const totalDataDom = new JSDOM(response.data);
+                remainData = totalDataDom.window.document.getElementsByTagName("h3")[1].innerHTML;
+                totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
+                wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
+                if(remainData != 0){
+                    captchaLength =  totalDataDom.window.document.getElementsByClassName("noselect")[0].innerHTML.length;
+                }
+                User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
+                .then(() =>  console.log("Update total captcha successfully"))
+                .catch(err => res.status(400).json('Error:'+ err + "total captcha not updated"));
+                console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Wrong Data is ${wrongData}`);
+            })
+            .catch(error => {console.log(error);});
+        })
+        .catch(error => {
+            console.log(error);
+        }); 
+    })
+    .catch(error => {console.log(error);});
+    let resTimeOut = 640000;
+    let nCaptcha = 0;
+    User.findOne({userId: username}, function(err, user) {
+        if (user != null){
+            nCaptcha = user.nCaptcha;
+        }
+    })
+    if(couponCode === "kkhome"){
+        if(nCaptcha === 250){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 300){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 350){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 400){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 500){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 600){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 700){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 800){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 1000){
+            resTimeOut = 120000;
+        }
+        if(nCaptcha === 1600){
+            resTimeOut = 180000;
+        }
+    }else if(couponCode === "freefun"){
+        if(nCaptcha === 250){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 300){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 350){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 400){
+            resTimeOut = 120000;
+        }
+        if(nCaptcha === 500){
+            resTimeOut = 135000;
+        }
+        if(nCaptcha === 600){
+            resTimeOut = 150000;
+        }
+        if(nCaptcha === 700){
+            resTimeOut = 180000;
+        }
+        if(nCaptcha === 800){
+            resTimeOut = 210000;
+        }
+        if(nCaptcha === 1000){
+            resTimeOut = 255000;
+        }
+        if(nCaptcha === 1600){
+            resTimeOut = 420000;
+        }
+    }else if(couponCode === "sm"){
+        if(nCaptcha === 250){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 300){
+            resTimeOut = 60000;
+        }
+        if(nCaptcha === 350){
+            resTimeOut = 75000;
+        }
+        if(nCaptcha === 400){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 500){
+            resTimeOut = 90000;
+        }
+        if(nCaptcha === 600){
+            resTimeOut = 105000;
+        }
+        if(nCaptcha === 700){
+            resTimeOut = 135000;
+        }
+        if(nCaptcha === 800){
+            resTimeOut = 150000;
+        }
+        if(nCaptcha === 1000){
+            resTimeOut = 180000;
+        }
+        if(nCaptcha === 1600){
+            resTimeOut = 300000;
+        }
+    }else{
+        if(nCaptcha === 250){
+            resTimeOut = 120000;
+        }
+        if(nCaptcha === 300){
+            resTimeOut = 120000;
+        }
+        if(nCaptcha === 350){
+            resTimeOut = 150000;
+        }
+        if(nCaptcha === 400){
+            resTimeOut = 180000;
+        }
+        if(nCaptcha === 500){
+            resTimeOut = 210000;
+        }
+        if(nCaptcha === 600){
+            resTimeOut = 240000;
+        }
+        if(nCaptcha === 700){
+            resTimeOut = 300000;
+        }
+        if(nCaptcha === 800){
+            resTimeOut = 330000;
+        }
+        if(nCaptcha === 1000){
+            resTimeOut = 420000;
+        }
+        if(nCaptcha === 1600){
+            resTimeOut = 640000;
+        }
+    }
     let today = new Date().toISOString().slice(0, 10);
     Entry.findOne({userId: username, eDate:today}, function(err,entry) {
         if(entry == null){
@@ -235,7 +409,7 @@ router.route('/startEntry').post((req, res) => {
     setTimeout(()=>{ Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
     .then(() =>  console.log("set entry done in data base"))
     .catch(err => res.status(400).json('Error:'+ err));
-    res.json({"success":"Your task is completed","isEntryDone":true}); },300000);
+    res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
 });
 
 // router.route('/singlePayment').post(async(req, res) => {
