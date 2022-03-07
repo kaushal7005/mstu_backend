@@ -238,8 +238,11 @@ router.route('/startEntry').post((req, res) => {
                 await User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
                 .then(() =>  {console.log("Update total captcha successfully"); nCaptcha = totalData})
                 .catch(err =>  {console.log(err);});
-                console.log(`Total Data is ${totalData}, Coupon Code is ${couponCode}`);
+                console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Coupon Code is ${couponCode},`);
                 if(couponCode === "kkhome"){
+                    if(nCaptcha === '200'){
+                        resTimeOut=60000;
+                    }
                     if(nCaptcha === '250'){
                         resTimeOut=60000;
                     }
@@ -271,6 +274,9 @@ router.route('/startEntry').post((req, res) => {
                         resTimeOut = 180000;
                     }
                 }else if(couponCode === "freefun"){
+                    if(nCaptcha === '200'){
+                        resTimeOut=90000;
+                    }
                     if(nCaptcha === '250'){
                         resTimeOut = 90000;
                     }
@@ -302,6 +308,9 @@ router.route('/startEntry').post((req, res) => {
                         resTimeOut = 420000;
                     }
                 }else if(couponCode === "sm"){
+                    if(nCaptcha === '200'){
+                        resTimeOut=60000;
+                    }
                     if(nCaptcha === '250'){
                         resTimeOut = 60000;
                     }
@@ -333,6 +342,9 @@ router.route('/startEntry').post((req, res) => {
                         resTimeOut = 300000;
                     }
                 }else{
+                    if(nCaptcha === '200'){
+                        resTimeOut=120000;
+                    }
                     if(nCaptcha === '250'){
                         resTimeOut = 120000;
                     }
@@ -370,7 +382,7 @@ router.route('/startEntry').post((req, res) => {
                 const resHess = replaceStr(password,"#","%23");
                 const resAnd = replaceStr(resHess,"&","%26");
                 const resPass = resAnd
-                console.log("Detail:- ",username,resPass,resTimeOut,speed);
+                console.log("Detail:- ",username, resPass, resTimeOut, speed);
                 if (remainData === "0"){
                     res.json({"success":"Your task is completed","isEntryDone":true});
                 }
@@ -381,7 +393,7 @@ router.route('/startEntry').post((req, res) => {
                         console.log("response:- Done"); 
                     })
                     .catch(error => {
-                        console.log(error);
+                        console.log("response:- Aws Lambda Late Response ");
                     });
                     Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
                     .then(() =>  console.log("set entry done in data base"))
