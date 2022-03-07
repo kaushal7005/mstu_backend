@@ -201,14 +201,13 @@ router.route('/startEntry').post((req, res) => {
     if(couponCode === "sm"){
         speed=175;
     }
-  
-    await axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
+    let remainData=0;
+    let totalData=0;
+    axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
     .then(async response => {
         let tokenKey = "__RequestVerificationToken";
         const loginDom = new JSDOM(response.data);
         let tokenValue = loginDom.window.document.getElementsByName(tokenKey)[0].value;
-        let remainData=0;
-        let totalData=0;
         let wrongData=0;
         let form=new FormData();
         form.append('UserName', username);
@@ -399,13 +398,15 @@ router.route('/startEntry').post((req, res) => {
     // User.findOne({userId: username,isFirst:"true"}, function(err, user) {
 
     // });
-    axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${password}&speed=${speed}`)
-    .then(async response => {
-        console.log("response:- ",response.data); 
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    if (remainData !== 0){
+        axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${password}&speed=${speed}`)
+        .then(async response => {
+            console.log("response:- ",response.data); 
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
     setTimeout(()=>{ Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
     .then(() =>  console.log("set entry done in data base"))
     .catch(err => res.status(400).json('Error:'+ err));
