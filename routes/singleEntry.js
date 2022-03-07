@@ -10,14 +10,6 @@ const axios = require('axios');
 
 axios.defaults.withCredentials = true
 
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
-function replaceHess(str, find, replace) {
-    return str.replace(new RegExp(find, 'g'), replace);
-  }
-
 // var instance = new Razorpay({
 //     key_id: 'rzp_test_QDrP0cyZ8YdsBD',
 //     key_secret: 'AUI8eq4kPExpUOFsLIHgRNKy',
@@ -225,8 +217,8 @@ router.route('/startEntry').post((req, res) => {
     }
     let remainData=0;
     let totalData=0;
-    let resTimeOut = 640000;
-    let nCaptcha = 0;
+    let resTimeOut=0;
+    let nCaptcha='0';
    
     axios.get('https://mdtpl.masterdigitaltechnology.com/Users/Login')
     .then(async response => {
@@ -251,161 +243,163 @@ router.route('/startEntry').post((req, res) => {
                 totalData = totalDataDom.window.document.getElementsByTagName("h3")[0].innerHTML;
                 wrongData = totalDataDom.window.document.getElementsByTagName("h3")[4].innerHTML;
                   
-                User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
-                .then(() =>  console.log("Update total captcha successfully"))
+               await User.updateOne({userId:username},{ $set: { nCaptcha: totalData } })
+                .then(() =>  {console.log("Update total captcha successfully"); nCaptcha = totalData})
                 .catch(err =>  {console.log(err);});
-                console.log(`Total Data is ${totalData}, Remain Data is ${remainData}, Wrong Data is ${wrongData}`);
+                console.log(`Total Data is ${totalData}, Coupon Code is ${couponCode}`);
+                if(couponCode === "kkhome"){
+                    if(nCaptcha === '250'){
+                        resTimeOut=60000;
+                    }
+                    if(nCaptcha === '300'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '350'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '400'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '500'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '600'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '700'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '800'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '1000'){
+                        resTimeOut = 120000;
+                    }
+                    if(nCaptcha === '1600'){
+                        resTimeOut = 180000;
+                    }
+                }else if(couponCode === "freefun"){
+                    if(nCaptcha === '250'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '300'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '350'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '400'){
+                        resTimeOut = 120000;
+                    }
+                    if(nCaptcha === '500'){
+                        resTimeOut = 135000;
+                    }
+                    if(nCaptcha === '600'){
+                        resTimeOut = 150000;
+                    }
+                    if(nCaptcha === '700'){
+                        resTimeOut = 180000;
+                    }
+                    if(nCaptcha === '800'){
+                        resTimeOut = 210000;
+                    }
+                    if(nCaptcha === '1000'){
+                        resTimeOut = 255000;
+                    }
+                    if(nCaptcha === '1600'){
+                        resTimeOut = 420000;
+                    }
+                }else if(couponCode === "sm"){
+                    if(nCaptcha === '250'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '300'){
+                        resTimeOut = 60000;
+                    }
+                    if(nCaptcha === '350'){
+                        resTimeOut = 75000;
+                    }
+                    if(nCaptcha === '400'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '500'){
+                        resTimeOut = 90000;
+                    }
+                    if(nCaptcha === '600'){
+                        resTimeOut = 105000;
+                    }
+                    if(nCaptcha === '700'){
+                        resTimeOut = 135000;
+                    }
+                    if(nCaptcha === '800'){
+                        resTimeOut = 150000;
+                    }
+                    if(nCaptcha === '1000'){
+                        resTimeOut = 180000;
+                    }
+                    if(nCaptcha === '1600'){
+                        resTimeOut = 300000;
+                    }
+                }else{
+                    if(nCaptcha === '250'){
+                        resTimeOut = 120000;
+                    }
+                    if(nCaptcha === '300'){
+                        resTimeOut = 120000;
+                    }
+                    if(nCaptcha === '350'){
+                        resTimeOut = 150000;
+                    }
+                    if(nCaptcha === '400'){
+                        resTimeOut = 180000;
+                    }
+                    if(nCaptcha === '500'){
+                        resTimeOut = 210000;
+                    }
+                    if(nCaptcha === '600'){
+                        resTimeOut = 240000;
+                    }
+                    if(nCaptcha === '700'){
+                        resTimeOut = 300000;
+                    }
+                    if(nCaptcha === '800'){
+                        resTimeOut = 330000;
+                    }
+                    if(nCaptcha === '1000'){
+                        resTimeOut = 420000;
+                    }
+                    if(nCaptcha === '1600'){
+                        resTimeOut = 640000;
+                    }
+                }
+                function replaceStr(str, find, replace) {
+                    return str.replace(new RegExp(find, 'g'), replace);
+                }
+                const resHess = replaceStr(password,"#","%23");
+                const resAnd = replaceStr(resHess,"&","%26");
+                const resPass = resAnd
+                console.log("set time out and user pass",username,resPass,speed);
+                if (remainData !== 0){
+                    await axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${resPass}&speed=${speed}`)
+                    .then(async response => {
+                        console.log("response:- Done"); 
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                }
+                Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
+                .then(() =>  console.log("set entry done in data base"))
+                .catch(err => res.status(400).json('Error:'+ err));
+                // res.json({"success":"Your task is completed","isEntryDone":true});
+                setTimeout(()=>{ res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
             })
             .catch(error => {console.log(error);});
         })
         .catch(error => {console.log(error);});
     })
     .catch(error => {console.log(error);});
-
-    User.findOne({userId: username}, function(err, user) {
-        if (user != null){
-            nCaptcha = user.nCaptcha;
-        }
-    })
-    if(couponCode === "kkhome"){
-        if(nCaptcha === 250){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 300){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 350){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 400){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 500){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 600){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 700){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 800){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 1000){
-            resTimeOut = 120000;
-        }
-        if(nCaptcha === 1600){
-            resTimeOut = 180000;
-        }
-    }else if(couponCode === "freefun"){
-        if(nCaptcha === 250){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 300){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 350){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 400){
-            resTimeOut = 120000;
-        }
-        if(nCaptcha === 500){
-            resTimeOut = 135000;
-        }
-        if(nCaptcha === 600){
-            resTimeOut = 150000;
-        }
-        if(nCaptcha === 700){
-            resTimeOut = 180000;
-        }
-        if(nCaptcha === 800){
-            resTimeOut = 210000;
-        }
-        if(nCaptcha === 1000){
-            resTimeOut = 255000;
-        }
-        if(nCaptcha === 1600){
-            resTimeOut = 420000;
-        }
-    }else if(couponCode === "sm"){
-        if(nCaptcha === 250){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 300){
-            resTimeOut = 60000;
-        }
-        if(nCaptcha === 350){
-            resTimeOut = 75000;
-        }
-        if(nCaptcha === 400){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 500){
-            resTimeOut = 90000;
-        }
-        if(nCaptcha === 600){
-            resTimeOut = 105000;
-        }
-        if(nCaptcha === 700){
-            resTimeOut = 135000;
-        }
-        if(nCaptcha === 800){
-            resTimeOut = 150000;
-        }
-        if(nCaptcha === 1000){
-            resTimeOut = 180000;
-        }
-        if(nCaptcha === 1600){
-            resTimeOut = 300000;
-        }
-    }else{
-        if(nCaptcha === 250){
-            resTimeOut = 120000;
-        }
-        if(nCaptcha === 300){
-            resTimeOut = 120000;
-        }
-        if(nCaptcha === 350){
-            resTimeOut = 150000;
-        }
-        if(nCaptcha === 400){
-            resTimeOut = 180000;
-        }
-        if(nCaptcha === 500){
-            resTimeOut = 210000;
-        }
-        if(nCaptcha === 600){
-            resTimeOut = 240000;
-        }
-        if(nCaptcha === 700){
-            resTimeOut = 300000;
-        }
-        if(nCaptcha === 800){
-            resTimeOut = 330000;
-        }
-        if(nCaptcha === 1000){
-            resTimeOut = 420000;
-        }
-        if(nCaptcha === 1600){
-            resTimeOut = 640000;
-        }
-    }
-    const Awspassword = replaceHess(req.body.password,"#","%23");
-    if (remainData !== 0){
-        axios.get(`https://shjhx4r8zj.execute-api.us-east-1.amazonaws.com/?userId=${username}&pass=${Awspassword}&speed=${speed}`)
-        .then(async response => {
-            console.log("response:- ",response.data); 
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    }
-    setTimeout(()=>{ Entry.updateOne({userId:username , eDate:today},{ $set: { isEntryDone: true } })
-    .then(() =>  console.log("set entry done in data base"))
-    .catch(err => res.status(400).json('Error:'+ err));
-    res.json({"success":"Your task is completed","isEntryDone":true}); },resTimeOut);
+    
 });
 
 // router.route('/singlePayment').post(async(req, res) => {
